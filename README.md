@@ -40,6 +40,16 @@ sich Ihr Regelsystem bewährt:
 Der Kontext ist im Scaffold (`index.html`) bereits als 3D-Geometrie hinterlegt und
 **verbindlich**. Ihr Konfigurator baut *in dieses Volumen hinein*.
 
+## Automatische Auswertung (DIN 277 & Kennwerte)
+
+Der Scaffold misst **live** an Ihrer erzeugten Geometrie und zeigt ein Auswertungs-Panel:
+**DIN 277 auf Massenebene** (BRI, BGF, Grundfläche), **Planungskennwerte** (Geschosse,
+GRZ, GFZ – bezogen auf die Baulücke) sowie das **A/V-Verhältnis** und geschätzte
+**CO₂-** und **Kosten**-Werte (BGF × didaktischer Platzhalterfaktor, im Code anpassbar).
+So liefert Ihr Konfigurator auf Knopfdruck Daten zur ökologischen und ökonomischen
+Vergleichbarkeit, die man sonst mühsam berechnen müsste. (Netto-Flächen nach DIN 277 –
+NUF/VF/TF – sind auf Massenebene nicht ableitbar.)
+
 ## Ablauf
 
 | Phase | Zeit | Inhalt |

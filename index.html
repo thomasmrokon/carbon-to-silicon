@@ -32,6 +32,19 @@
     :root { --bg:#17181a; --panel:#1f2124; --ink:#eceef0; --mut:#9aa0a6; --line:#33363a; }
     .btns button { background:#26282b; }
   }
+  #stats {
+    position:fixed; top:16px; right:16px; width:264px; max-width:calc(100vw - 32px);
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:14px 16px; box-shadow:0 6px 24px rgba(0,0,0,.08); font-size:12px;
+  }
+  #stats h2 { font-size:13px; margin:0 0 2px; }
+  #stats .sub { color:var(--mut); font-size:10px; margin:0 0 8px; }
+  #stats .grp { font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--accent); margin:11px 0 3px; }
+  #stats .r { display:flex; justify-content:space-between; gap:8px; padding:2px 0; }
+  #stats .r span:first-child { color:var(--mut); }
+  #stats .r b { font-variant-numeric:tabular-nums; font-weight:600; }
+  #stats .fine { margin-top:10px; padding-top:8px; border-top:1px dashed var(--line); color:var(--mut); font-size:10px; line-height:1.4; }
+  @media (max-width: 760px) { #stats { position:static; width:auto; margin:8px 16px 0; } }
 </style>
 </head>
 <body>
@@ -63,6 +76,24 @@
     Der graue Kontext (Brandwände, Nachbarn, bebaubares Volumen) ist vorgegeben und verbindlich.
     Ihr Konfigurator entsteht in <code>buildKonfigurator()</code> – siehe markierte Zone im Code.
   </p>
+</div>
+
+<div id="stats">
+  <h2>Auswertung</h2>
+  <p class="sub">live aus der Geometrie gemessen</p>
+  <div class="grp">DIN 277 (Masse)</div>
+  <div class="r"><span>BRI (Volumen)</span><b><span id="sBRI">–</span> m³</b></div>
+  <div class="r"><span>BGF</span><b><span id="sBGF">–</span> m²</b></div>
+  <div class="r"><span>Grundfläche</span><b><span id="sGRF">–</span> m²</b></div>
+  <div class="grp">Planungskennwerte</div>
+  <div class="r"><span>Geschosse</span><b><span id="sGesch">–</span></b></div>
+  <div class="r"><span>GRZ</span><b><span id="sGRZ">–</span></b></div>
+  <div class="r"><span>GFZ</span><b><span id="sGFZ">–</span></b></div>
+  <div class="grp">Ökologisch / Ökonomisch</div>
+  <div class="r"><span>A/V-Verhältnis</span><b><span id="sAV">–</span> 1/m</b></div>
+  <div class="r"><span>CO₂ (geschätzt)</span><b><span id="sCO2">–</span> t</b></div>
+  <div class="r"><span>Kosten (geschätzt)</span><b><span id="sKost">–</span></b></div>
+  <p class="fine">BRI/BGF/Grundfläche werden an Ihrer erzeugten Geometrie gemessen. CO₂ und Kosten = BGF × didaktischer Platzhalterfaktor (im Code anpassbar). Netto-Flächen (NUF/VF/TF) sind auf Massenebene nicht ableitbar.</p>
 </div>
 
 <!-- three.js (feste Version, kein Build-Schritt) -->
@@ -184,7 +215,65 @@ function buildKonfigurator() {
 //  === ENDE IHR KONFIGURATOR ===
 // ==================================================================
 
-function rebuild() { buildKontext(); buildKonfigurator(); }
+// ------------------------------------------------------------------
+//  AUSWERTUNG  –  feste Kennzahlen, vom Template vorgegeben
+//  (misst live Ihre erzeugte Geometrie = konfiguratorGruppe)
+//  Didaktische Platzhalter – anpassbar:
+// ------------------------------------------------------------------
+const GESCHOSSHOEHE = 3.0;   // m  · für BGF = BRI / Geschosshöhe
+const CO2_FAKTOR    = 450;   // kg CO₂e je m² BGF (Platzhalter)
+const KOSTEN_FAKTOR = 2500;  // €  je m² BGF (Platzhalter)
+
+function volumenUndFlaeche(mesh) {
+  const g = mesh.geometry, pos = g && g.attributes.position;
+  if (!pos) return { v: 0, a: 0 };
+  mesh.updateWorldMatrix(true, false);
+  const m = mesh.matrixWorld, idx = g.index;
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), t = new THREE.Vector3(), u = new THREE.Vector3();
+  let v = 0, area = 0;
+  const tri = idx ? idx.count / 3 : pos.count / 3;
+  for (let i = 0; i < tri; i++) {
+    const ia = idx ? idx.getX(i*3)   : i*3;
+    const ib = idx ? idx.getX(i*3+1) : i*3+1;
+    const ic = idx ? idx.getX(i*3+2) : i*3+2;
+    a.fromBufferAttribute(pos, ia).applyMatrix4(m);
+    b.fromBufferAttribute(pos, ib).applyMatrix4(m);
+    c.fromBufferAttribute(pos, ic).applyMatrix4(m);
+    v += a.dot(t.copy(b).cross(c)) / 6;                         // signiertes Tetraeder
+    area += t.copy(b).sub(a).cross(u.copy(c).sub(a)).length() / 2;
+  }
+  return { v: Math.abs(v), a: area };
+}
+
+function analyse() {
+  let V = 0, A = 0, hasMesh = false;
+  konfiguratorGruppe.traverse((o) => { if (o.isMesh) { hasMesh = true; const r = volumenUndFlaeche(o); V += r.v; A += r.a; } });
+  const size = new THREE.Vector3();
+  if (hasMesh) new THREE.Box3().setFromObject(konfiguratorGruppe).getSize(size);
+  const BRI = V;
+  const BGF = BRI / GESCHOSSHOEHE;
+  const GRF = hasMesh ? size.x * size.z : 0;
+  const geschosse = hasMesh ? Math.max(1, Math.round(size.y / GESCHOSSHOEHE)) : 0;
+  const grundstueck = P.breite * P.tiefe;
+  const GRZ = grundstueck ? GRF / grundstueck : 0;
+  const GFZ = grundstueck ? BGF / grundstueck : 0;
+  const AV  = BRI ? A / BRI : 0;
+  const co2t = BGF * CO2_FAKTOR / 1000;   // t CO₂e
+  const kost = BGF * KOSTEN_FAKTOR;       // €
+  const set = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+  set('sBRI', Math.round(BRI).toLocaleString('de-DE'));
+  set('sBGF', Math.round(BGF).toLocaleString('de-DE'));
+  set('sGRF', Math.round(GRF).toLocaleString('de-DE'));
+  set('sGesch', geschosse || '–');
+  set('sGRZ', GRZ.toFixed(2));
+  set('sGFZ', GFZ.toFixed(2));
+  set('sAV',  AV.toFixed(3));
+  set('sCO2', co2t.toFixed(1));
+  set('sKost', kost >= 1e6 ? (kost / 1e6).toFixed(2).replace('.', ',') + ' Mio. €'
+                           : Math.round(kost).toLocaleString('de-DE') + ' €');
+}
+
+function rebuild() { buildKontext(); buildKonfigurator(); analyse(); }
 
 // ------------------------------------------------------------------
 //  UI / Slider

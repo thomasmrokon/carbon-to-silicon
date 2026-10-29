@@ -31,5 +31,7 @@ Diese Rahmenbedingungen können Sie **direkt an Ihren KI-Agenten übergeben**.
 
 ### Hinweis zum Scaffold
 Die mitgelieferte `index.html` enthält bereits Szene, Kamera, Licht, OrbitControls,
-den Baulücken-Kontext, Parameter-Slider und die Export-Funktionen. Ihr Beitrag entsteht
-ausschließlich in der markierten Zone `=== HIER BEGINNT IHR KONFIGURATOR ===`.
+den Baulücken-Kontext, Parameter-Slider, die Export-Funktionen und eine **feste
+Auswertung** (DIN 277 auf Massenebene, Planungskennwerte, A/V, CO₂/Kosten), die live an
+Ihrer Geometrie misst. Ihr Beitrag entsteht ausschließlich in der markierten Zone
+`=== HIER BEGINNT IHR KONFIGURATOR ===`; Kontext und Auswertung bleiben unverändert.
