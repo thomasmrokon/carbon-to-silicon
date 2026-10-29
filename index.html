@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Carbon to Silicon – Konfigurator-Scaffold</title>
+<style>
+  :root { --bg:#f4f4f2; --panel:#ffffff; --ink:#1a1a1a; --mut:#666; --line:#d8d8d4; --accent:#1763ff; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color:var(--ink); }
+  #app { position:fixed; inset:0; }
+  canvas { display:block; }
+  #ui {
+    position:fixed; top:16px; left:16px; width:300px; max-width:calc(100vw - 32px);
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:16px 16px 14px; box-shadow:0 6px 24px rgba(0,0,0,.08); font-size:13px;
+  }
+  #ui h1 { font-size:15px; margin:0 0 2px; }
+  #ui .sub { color:var(--mut); font-size:11px; margin:0 0 12px; }
+  .row { margin:10px 0; }
+  .row label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; }
+  .row label b { font-weight:600; }
+  .row input[type=range] { width:100%; accent-color:var(--accent); }
+  .btns { display:flex; gap:8px; margin-top:14px; }
+  .btns button {
+    flex:1; padding:8px 6px; border:1px solid var(--line); background:#fafafa;
+    border-radius:8px; cursor:pointer; font-size:12px;
+  }
+  .btns button:hover { border-color:var(--accent); color:var(--accent); }
+  .note { margin-top:12px; padding-top:10px; border-top:1px dashed var(--line); color:var(--mut); font-size:11px; line-height:1.45; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#17181a; --panel:#1f2124; --ink:#eceef0; --mut:#9aa0a6; --line:#33363a; }
+    .btns button { background:#26282b; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div id="ui">
+  <h1>Carbon&nbsp;to&nbsp;Silicon</h1>
+  <p class="sub">Konfigurator-Scaffold · Baulücke</p>
+
+  <div class="row">
+    <label>Grundstücksbreite <b><span id="vBreite">10.0</span> m</b></label>
+    <input type="range" id="breite" min="6" max="12" step="0.5" value="10" />
+  </div>
+  <div class="row">
+    <label>Grundstückstiefe <b><span id="vTiefe">20.0</span> m</b></label>
+    <input type="range" id="tiefe" min="10" max="25" step="0.5" value="20" />
+  </div>
+  <div class="row">
+    <label>Traufhöhe <b><span id="vTraufe">15.0</span> m</b></label>
+    <input type="range" id="traufe" min="9" max="21" step="1.5" value="15" />
+  </div>
+
+  <div class="btns">
+    <button id="expObj">Export .obj</button>
+    <button id="expGltf">Export .glTF</button>
+  </div>
+
+  <p class="note">
+    Der graue Kontext (Brandwände, Nachbarn, bebaubares Volumen) ist vorgegeben und verbindlich.
+    Ihr Konfigurator entsteht in <code>buildKonfigurator()</code> – siehe markierte Zone im Code.
+  </p>
+</div>
+
+<!-- three.js (feste Version, kein Build-Schritt) -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { OBJExporter }   from 'three/addons/exporters/OBJExporter.js';
+import { GLTFExporter }  from 'three/addons/exporters/GLTFExporter.js';
+
+// ------------------------------------------------------------------
+//  GRUNDGERÜST  –  nicht verändern nötig (dürfen Sie aber)
+// ------------------------------------------------------------------
+const app = document.getElementById('app');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(
+  matchMedia('(prefers-color-scheme: dark)').matches ? 0x17181a : 0xf4f4f2
+);
+
+const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 1000);
+camera.position.set(19, 17, -20); // Schrägansicht von der Straßenseite in die Baulücke
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+app.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 1.1));
+const sun = new THREE.DirectionalLight(0xffffff, 1.4);
+sun.position.set(18, 30, 20);
+scene.add(sun);
+
+// Gruppen: Kontext (vorgegeben) + Konfigurator (Ihr Ergebnis)
+const kontextGruppe = new THREE.Group();
+const konfiguratorGruppe = new THREE.Group();
+scene.add(kontextGruppe, konfiguratorGruppe);
+
+// Parameter (werden von den Slidern gesetzt)
+const P = { breite: 10, tiefe: 20, traufe: 15 };
+
+// ------------------------------------------------------------------
+//  KONTEXT  –  die Baulücke (vorgegeben & verbindlich)
+//  X = Breite (Straßenfront), Z = Tiefe (0 = Straße), Y = Höhe
+// ------------------------------------------------------------------
+function buildKontext() {
+  kontextGruppe.clear();
+  const { breite, tiefe, traufe } = P;
+
+  const grau   = new THREE.MeshStandardMaterial({ color: 0xbfbfbf, roughness: 0.95 });
+  const wand   = new THREE.MeshStandardMaterial({ color: 0xcfcfca, roughness: 1, transparent: true, opacity: 0.85, side: THREE.DoubleSide });
+
+  // Boden / Straße
+  const boden = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ color: 0xe7e7e2, roughness: 1 }));
+  boden.rotation.x = -Math.PI / 2;
+  boden.position.z = tiefe / 2;
+  kontextGruppe.add(boden);
+
+  const strasse = new THREE.Mesh(new THREE.PlaneGeometry(60, 8), new THREE.MeshStandardMaterial({ color: 0xccccc6, roughness: 1 }));
+  strasse.rotation.x = -Math.PI / 2;
+  strasse.position.set(0, 0.01, -4);
+  kontextGruppe.add(strasse);
+
+  // Zwei seitliche Brandwände (linke/rechte Grundstücksgrenze)
+  for (const s of [-1, 1]) {
+    const w = new THREE.Mesh(new THREE.PlaneGeometry(tiefe, traufe), wand);
+    w.rotation.y = Math.PI / 2;
+    w.position.set(s * breite / 2, traufe / 2, tiefe / 2);
+    kontextGruppe.add(w);
+  }
+
+  // Nachbar-Baukörper (grau, Kontext)
+  for (const s of [-1, 1]) {
+    const n = new THREE.Mesh(new THREE.BoxGeometry(8, traufe, tiefe), grau);
+    n.position.set(s * (breite / 2 + 4), traufe / 2, tiefe / 2);
+    kontextGruppe.add(n);
+  }
+
+  // Bebaubares Volumen (Draht-Envelope)
+  const env = new THREE.Mesh(new THREE.BoxGeometry(breite, traufe, tiefe), new THREE.MeshBasicMaterial({ wireframe: true, color: 0x1763ff }));
+  env.position.set(0, traufe / 2, tiefe / 2);
+  kontextGruppe.add(env);
+
+  controls.target.set(0, traufe / 2, tiefe / 2);
+}
+
+// ==================================================================
+//  === HIER BEGINNT IHR KONFIGURATOR: Kit of Parts + Regeln ===
+//
+//  Bauen Sie Ihre Geometrie aus Ihrem selbst definierten Bauteil-
+//  Vokabular nach Ihren Regeln in "konfiguratorGruppe" hinein.
+//  Die Funktion wird bei jeder Parameteränderung neu aufgerufen.
+//
+//  Das Folgende ist nur ein PLATZHALTER – bitte ersetzen.
+// ==================================================================
+function buildKonfigurator() {
+  konfiguratorGruppe.clear();
+  const { breite, tiefe, traufe } = P;
+
+  // PLATZHALTER: ein einzelner Baukörper, der das Volumen füllt. ERSETZEN!
+  const platzhalter = new THREE.Mesh(
+    new THREE.BoxGeometry(breite * 0.96, traufe, tiefe * 0.96),
+    new THREE.MeshStandardMaterial({ color: 0x9aa7ff, roughness: 0.7, transparent: true, opacity: 0.5 })
+  );
+  platzhalter.position.set(0, traufe / 2, tiefe / 2);
+  konfiguratorGruppe.add(platzhalter);
+}
+// ==================================================================
+//  === ENDE IHR KONFIGURATOR ===
+// ==================================================================
+
+function rebuild() { buildKontext(); buildKonfigurator(); }
+
+// ------------------------------------------------------------------
+//  UI / Slider
+// ------------------------------------------------------------------
+function bindSlider(id, key, labelId) {
+  const el = document.getElementById(id);
+  const out = document.getElementById(labelId);
+  el.addEventListener('input', () => {
+    P[key] = parseFloat(el.value);
+    out.textContent = P[key].toFixed(1);
+    rebuild();
+  });
+}
+bindSlider('breite', 'breite', 'vBreite');
+bindSlider('tiefe',  'tiefe',  'vTiefe');
+bindSlider('traufe', 'traufe', 'vTraufe');
+
+// ------------------------------------------------------------------
+//  Export (Ihr Ergebnis = konfiguratorGruppe)
+// ------------------------------------------------------------------
+function download(filename, text, type) {
+  const blob = new Blob([text], { type });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+document.getElementById('expObj').addEventListener('click', () => {
+  const obj = new OBJExporter().parse(konfiguratorGruppe);
+  download('konfigurator.obj', obj, 'text/plain');
+});
+document.getElementById('expGltf').addEventListener('click', () => {
+  new GLTFExporter().parse(konfiguratorGruppe, (gltf) => {
+    download('konfigurator.gltf', JSON.stringify(gltf), 'application/json');
+  }, (e) => console.error(e), { binary: false });
+});
+
+// ------------------------------------------------------------------
+//  Render-Loop
+// ------------------------------------------------------------------
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+rebuild();
+(function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>
