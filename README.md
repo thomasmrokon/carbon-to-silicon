@@ -50,6 +50,17 @@ So liefert Ihr Konfigurator auf Knopfdruck Daten zur ökologischen und ökonomis
 Vergleichbarkeit, die man sonst mühsam berechnen müsste. (Netto-Flächen nach DIN 277 –
 NUF/VF/TF – sind auf Massenebene nicht ableitbar.)
 
+## Ihr eigenes Bewertungskriterium
+
+Über die feste Auswertung hinaus definieren Sie **mindestens ein eigenes, vergleichendes
+Kriterium** und bauen es ein. Es muss **quantifizierbar** sein, **live auf Ihre Parameter
+reagieren**, **im Tool angezeigt** werden und in der Reflexion **begründet** sein – *was ein
+guter Entwurf ist, legen damit Sie fest.* Implementiert wird es in der markierten Funktion
+`eigenesKriterium()` in `index.html`; das Ergebnis erscheint im Auswertungs-Panel.
+
+*Zur Anregung (nicht verpflichtend):* Zirkularität/Rückbaubarkeit, Tageslichtangebot,
+Anteil Flächen mit Außenbezug, Flexibilität/Umnutzbarkeit, Kosten je Nutzeinheit, graue Energie.
+
 ## Ablauf
 
 | Phase | Zeit | Inhalt |

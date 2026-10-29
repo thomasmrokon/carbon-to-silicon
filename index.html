@@ -93,6 +93,8 @@
   <div class="r"><span>A/V-Verhältnis</span><b><span id="sAV">–</span> 1/m</b></div>
   <div class="r"><span>CO₂ (geschätzt)</span><b><span id="sCO2">–</span> t</b></div>
   <div class="r"><span>Kosten (geschätzt)</span><b><span id="sKost">–</span></b></div>
+  <div class="grp">Eigenes Kriterium</div>
+  <div class="r"><span id="sEigenLbl">(noch zu definieren)</span><b><span id="sEigenVal">–</span></b></div>
   <p class="fine">BRI/BGF/Grundfläche werden an Ihrer erzeugten Geometrie gemessen. CO₂ und Kosten = BGF × didaktischer Platzhalterfaktor (im Code anpassbar). Netto-Flächen (NUF/VF/TF) sind auf Massenebene nicht ableitbar.</p>
 </div>
 
@@ -245,6 +247,24 @@ function volumenUndFlaeche(mesh) {
   return { v: Math.abs(v), a: area };
 }
 
+// ==================================================================
+//  === IHR EIGENES KRITERIUM (vergleichend) ===
+//
+//  Definieren Sie EIN eigenes, vergleichendes Kriterium – quantifizierbar,
+//  reagiert auf Ihre Parameter/Geometrie, wird begründet (siehe Reflexion).
+//  Geben Sie { label, wert, einheit } zurück; null = noch nicht definiert.
+//  ctx enthält: BRI, BGF, GRF, geschosse, GRZ, GFZ, AV, A (Hüllfläche),
+//               breite, tiefe, traufe sowie gruppe (konfiguratorGruppe).
+// ==================================================================
+function eigenesKriterium(ctx) {
+  // BEISPIEL (ersetzen): Kompaktheit = BGF je m² Hüllfläche
+  // return { label: 'Kompaktheit', wert: (ctx.A ? (ctx.BGF / ctx.A).toFixed(2) : '0'), einheit: 'm²/m²' };
+  return null;
+}
+// ==================================================================
+//  === ENDE EIGENES KRITERIUM ===
+// ==================================================================
+
 function analyse() {
   let V = 0, A = 0, hasMesh = false;
   konfiguratorGruppe.traverse((o) => { if (o.isMesh) { hasMesh = true; const r = volumenUndFlaeche(o); V += r.v; A += r.a; } });
@@ -271,6 +291,20 @@ function analyse() {
   set('sCO2', co2t.toFixed(1));
   set('sKost', kost >= 1e6 ? (kost / 1e6).toFixed(2).replace('.', ',') + ' Mio. €'
                            : Math.round(kost).toLocaleString('de-DE') + ' €');
+
+  // Eigenes, vom Studierenden definiertes Kriterium
+  let ek = null;
+  try { ek = eigenesKriterium({ BRI, BGF, GRF, geschosse, GRZ, GFZ, AV, A,
+                                breite: P.breite, tiefe: P.tiefe, traufe: P.traufe,
+                                gruppe: konfiguratorGruppe }); }
+  catch (e) { /* Fehler im eigenen Kriterium nicht fatal */ }
+  if (ek && ek.label) {
+    set('sEigenLbl', ek.label);
+    set('sEigenVal', (ek.wert !== undefined ? ek.wert : '–') + (ek.einheit ? ' ' + ek.einheit : ''));
+  } else {
+    set('sEigenLbl', '(noch zu definieren)');
+    set('sEigenVal', '–');
+  }
 }
 
 function rebuild() { buildKontext(); buildKonfigurator(); analyse(); }
