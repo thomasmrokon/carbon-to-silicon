@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Onboarding – Carbon to Silicon</title>
+<style>
+  :root{
+    --bg:#f5f5f2; --card:#ffffff; --ink:#191a1c; --mut:#6a6e73; --line:#e3e3df;
+    --accent:#1763ff; --accent-weak:#eaf0ff; --ok:#1f9d57; --warn:#b26a00;
+    --radius:14px; --maxw:760px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#141517; --card:#1d1f22; --ink:#edeef0; --mut:#9aa0a6; --line:#2e3135;
+           --accent:#5b8bff; --accent-weak:#1b2740; }
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; line-height:1.55; }
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 16px 80px; }
+
+  header.hero{ padding:48px 0 24px; }
+  .eyebrow{ color:var(--accent); font-weight:600; font-size:13px; letter-spacing:.06em; text-transform:uppercase; }
+  h1{ font-size:clamp(28px,6vw,42px); line-height:1.1; margin:.2em 0 .3em; letter-spacing:-.01em; }
+  .lead{ font-size:18px; color:var(--mut); max-width:46ch; }
+  .reassure{ margin-top:18px; padding:14px 16px; background:var(--accent-weak); border-radius:var(--radius);
+    font-size:15px; }
+  .reassure b{ color:var(--accent); }
+
+  /* progress */
+  .progress{ position:sticky; top:0; z-index:5; background:var(--bg);
+    padding:12px 0 10px; border-bottom:1px solid var(--line); margin-bottom:8px; }
+  .bar{ height:8px; background:var(--line); border-radius:99px; overflow:hidden; }
+  .bar > i{ display:block; height:100%; width:0%; background:var(--accent); transition:width .3s ease; }
+  .pct{ font-size:12px; color:var(--mut); margin-top:6px; }
+
+  .step{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    margin:14px 0; overflow:hidden; }
+  .step > summary{ list-style:none; cursor:pointer; padding:16px 18px; display:flex; align-items:center; gap:14px; }
+  .step > summary::-webkit-details-marker{ display:none; }
+  .num{ flex:0 0 32px; height:32px; border-radius:50%; background:var(--accent-weak); color:var(--accent);
+    display:grid; place-items:center; font-weight:700; font-size:14px; }
+  .step[data-done="1"] .num{ background:var(--ok); color:#fff; }
+  .stitle{ font-weight:650; font-size:17px; }
+  .ssub{ color:var(--mut); font-size:13px; }
+  .chev{ margin-left:auto; color:var(--mut); transition:transform .2s; }
+  .step[open] .chev{ transform:rotate(90deg); }
+  .body{ padding:2px 18px 20px; border-top:1px solid var(--line); }
+  .body p{ margin:12px 0; }
+  .body ul{ margin:10px 0; padding-left:20px; }
+  .body li{ margin:6px 0; }
+
+  .term{ border-bottom:1px dotted var(--accent); cursor:help; }
+  .box{ background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin:12px 0;
+    font-size:14px; }
+  .box.warn{ border-color:var(--warn); }
+  .box .lbl{ font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--mut); margin-bottom:4px; }
+
+  a.btn, button.btn{ display:inline-block; text-decoration:none; font:inherit; cursor:pointer;
+    background:var(--accent); color:#fff; border:none; border-radius:9px; padding:9px 14px; font-size:14px; font-weight:600; }
+  a.btn.ghost{ background:transparent; color:var(--accent); border:1px solid var(--accent); }
+  .btnrow{ display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
+
+  code{ background:var(--bg); border:1px solid var(--line); border-radius:5px; padding:1px 5px; font-size:.9em; }
+  .copywrap{ position:relative; }
+  pre{ background:#0f1012; color:#e6e6e6; border-radius:10px; padding:14px 14px; overflow:auto; font-size:13px; line-height:1.5; }
+  @media (prefers-color-scheme: light){ pre{ background:#1b1d21; } }
+  .copy{ position:absolute; top:8px; right:8px; background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.25);
+    border-radius:7px; padding:4px 9px; font-size:12px; cursor:pointer; }
+  .copy.done{ background:var(--ok); border-color:var(--ok); }
+
+  .check{ display:flex; align-items:center; gap:10px; margin-top:16px; padding-top:14px; border-top:1px dashed var(--line); }
+  .check input{ width:20px; height:20px; accent-color:var(--ok); }
+  .check label{ font-weight:600; font-size:14px; cursor:pointer; }
+
+  textarea{ width:100%; min-height:90px; border:1px solid var(--line); border-radius:10px; padding:10px 12px;
+    font:inherit; font-size:14px; background:var(--bg); color:var(--ink); resize:vertical; }
+
+  details.gloss{ border:1px solid var(--line); border-radius:10px; margin:8px 0; background:var(--card); }
+  details.gloss summary{ cursor:pointer; padding:11px 14px; font-weight:600; font-size:14px; }
+  details.gloss .g{ padding:0 14px 14px; color:var(--mut); font-size:14px; }
+
+  h2.sec{ font-size:22px; margin:40px 0 6px; }
+  footer{ margin-top:40px; color:var(--mut); font-size:13px; text-align:center; }
+  .tip{ color:var(--warn); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Stegreif · Bachelor Architektur · HS Mainz</div>
+    <h1>Onboarding: Carbon&nbsp;to&nbsp;Silicon</h1>
+    <p class="lead">Noch nie programmiert? GitHub völlig fremd? Kein Problem. Diese Seite führt Sie Schritt für Schritt – von null bis zu Ihrem eigenen, live laufenden Entwurfs-Werkzeug.</p>
+    <div class="reassure">
+      <b>Wichtig vorab:</b> Sie müssen <b>nicht</b> programmieren können. Ihre Aufgabe ist es, die <b>Regeln</b> zu
+      definieren – den Code schreibt die KI. Sie sind der Architekt des Systems, nicht der Programmierer.
+    </div>
+  </header>
+
+  <div class="progress">
+    <div class="bar"><i id="barfill"></i></div>
+    <div class="pct"><span id="pctnum">0</span>&nbsp;von&nbsp;7 Schritten erledigt · Ihr Fortschritt wird lokal gespeichert</div>
+  </div>
+
+  <!-- STEP 0 -->
+  <details class="step" open>
+    <summary><span class="num">0</span><span><span class="stitle">Was Sie am Ende haben</span><br><span class="ssub">Das große Bild in 60 Sekunden</span></span><span class="chev">▶</span></summary>
+    <div class="body">
+      <p>Sie bauen <b>kein fertiges Gebäude</b>, sondern ein kleines <b>Werkzeug</b>: einen Konfigurator, der im
+      Browser läuft und – nach <i>Ihren</i> Regeln – aus einem selbst definierten Baukasten („Kit of Parts")
+      in Echtzeit ein 3D-Gebäude in einer vorgegebenen <b>Baulücke</b> erzeugt.</p>
+      <p>Die Idee <b>Carbon&nbsp;→&nbsp;Silicon</b>: Am Freitag entsteht Ihr Konzept analog, nur mit Kopf, Stift und
+      Papier (Kohlenstoff). Danach setzen Sie es mithilfe von KI-Agenten in ein funktionierendes Werkzeug um
+      (Silicium). Bewertet wird Ihre <b>Haltung und Logik</b>, nicht der Code.</p>
+      <div class="box"><div class="lbl">Ihr Ablauf in einem Satz</div>
+        Eigenes Repo aus der Vorlage → im Browser veröffentlichen (Pages) → mit der KI Ihren Konfigurator in die
+        Vorlage hineinbauen → testen → abgeben.</div>
+      <div class="check"><input type="checkbox" id="c0"><label for="c0">Verstanden – los geht's</label></div>
+    </div>
+  </details>
+
+  <!-- STEP 1 -->
+  <details class="step">
+    <summary><span class="num">1</span><span><span class="stitle">GitHub-Account anlegen</span><br><span class="ssub">Ihr kostenloser Arbeitsplatz im Web</span></span><span class="chev">▶</span></summary>
+    <div class="body">
+      <p><span class="term" data-tip="Eine kostenlose Plattform, auf der Projekte (Dateien + Verlauf) gespeichert und im Web veröffentlicht werden.">GitHub</span>
+      ist der Ort, an dem Ihr Projekt lebt. Account anlegen (kostenlos), E-Mail bestätigen – fertig.</p>
+      <div class="btnrow"><a class="btn" href="https://github.com/signup" target="_blank" rel="noopener">GitHub-Account erstellen →</a></div>
+      <div class="box"><div class="lbl">Tipp</div>Wählen Sie einen Benutzernamen, den Sie auch beruflich zeigen würden – er wird Teil Ihrer Projekt-URL.</div>
+      <div class="check"><input type="checkbox" id="c1"><label for="c1">Account steht</label></div>
+    </div>
+  </details>
+
+  <!-- STEP 2 -->
+  <details class="step">
+    <summary><span class="num">2</span><span><span class="stitle">Eigenes Projekt aus der Vorlage</span><br><span class="ssub">Ein Klick – „Use this template"</span></span><span class="chev">▶</span></summary>
+    <div class="body">
+      <p>Sie starten nicht bei null: Es gibt eine fertige <span class="term" data-tip="Ein Projektordner auf GitHub – mit allen Dateien und ihrem Änderungsverlauf.">Vorlage (Repository)</span>
+      mit Szene, Baulücken-Kontext und Exportfunktion. Mit <b>„Use this template"</b> erzeugen Sie Ihre eigene Kopie.</p>
+      <div class="btnrow"><a class="btn" href="https://github.com/thomasmrokon/carbon-to-silicon/generate" target="_blank" rel="noopener">Eigene Kopie erstellen →</a>
+      <a class="btn ghost" href="https://github.com/thomasmrokon/carbon-to-silicon" target="_blank" rel="noopener">Vorlage ansehen</a></div>
+      <ul>
+        <li>Repository-Name frei wählbar (z. B. <code>c2s-nachname</code>).</li>
+        <li>Sichtbarkeit: <b>Public</b> (nötig, damit Ihr Tool live laufen kann).</li>
+        <li>„Create repository" klicken.</li>
+      </ul>
+      <div class="check"><input type="checkbox" id="c2"><label for="c2">Eigenes Repository erstellt</label></div>
+    </div>
+  </details>
+
+  <!-- STEP 3 -->
+  <details class="step">
+    <summary><span class="num">3</span><span><span class="stitle">Live schalten mit GitHub Pages</span><br><span class="ssub">Ihr Tool bekommt eine Web-Adresse</span></span><span class="chev">▶</span></summary>
+    <div class="body">
+      <p><span class="term" data-tip="Ein kostenloser Dienst von GitHub, der die Dateien Ihres Repositories als echte Webseite ausliefert.">GitHub Pages</span>
+      macht aus Ihren Dateien eine echte Webseite, die jede:r im Browser öffnen kann.</p>
+      <ul>
+        <li>In Ihrem Repository: <b>Settings → Pages</b>.</li>
+        <li><b>Source:</b> „Deploy from a branch".</li>
+        <li><b>Branch:</b> <code>main</code>, Ordner <code>/ (root)</code> → <b>Save</b>.</li>
+        <li>Nach ca. 1–2 Minuten erscheint oben: <i>„Your site is live at …"</i> – das ist Ihre Tool-URL.</li>
+      </ul>
+      <div class="box warn"><div class="lbl">Wenn ein Fehler kommt</div>Direkt nach dem Aktivieren zeigt die Seite oft kurz einen Fehler (404). Einfach 1–2 Minuten warten und neu laden (<code>Strg</code>+<code>F5</code>).</div>
+      <div class="check"><input type="checkbox" id="c3"><label for="c3">Pages aktiv, URL funktioniert</label></div>
+    </div>
+  </details>
+
+  <!-- STEP 4 -->
+  <details class="step">
+    <summary><span class="num">4</span><span><span class="stitle">Den Scaffold verstehen</span><br><span class="ssub">Was vorgegeben ist – und was Ihre Aufgabe ist</span></span><span class="chev">▶</span></summary>
+    <div class="body">
+      <p>Die Datei <code>index.html</code> ist Ihr Werkzeug. Öffnen Sie Ihre Pages-URL: Sie sehen die <b>Baulücke</b>
+      – zwei Nachbargebäude, dazwischen das blaue <b>bebaubare Volumen</b> und Regler für Breite, Tiefe und Höhe.</p>
+      <ul>
+        <li><b>Vorgegeben &amp; verbindlich (grau/blau):</b> der Kontext – Brandwände, Nachbarn, das Volumen.</li>
+        <li><b>Ihre Aufgabe:</b> im Code die Funktion <code>buildKonfigurator()</code> füllen – dort entsteht Ihr
+        Gebäude aus Ihrem Kit of Parts nach Ihren Regeln. Die Stelle ist klar markiert:
+        <code>=== HIER BEGINNT IHR KONFIGURATOR ===</code>.</li>
+      </ul>
+      <div class="box"><div class="lbl">Gut zu wissen</div>Der Platzhalter-Block im Tool ist Absicht – er zeigt, wo Ihr Entwurf hinkommt. Ihn ersetzen Sie.</div>
+      <div class="check"><input type="checkbox" id="c4"><label for="c4">Tool geöffnet, Aufgabe klar</label></div>
+    </div>
+  </details>
+
+  <!-- STEP 5 -->
+  <details class="step">
+    <summary><span class="num">5</span><span><span class="stitle">Mit der KI arbeiten</span><br><span class="ssub">Ihr Regel-Blatt wird zu Code</span></span><span class="chev">▶</span></summary>
+    <div class="body">
+      <p>Sie beschreiben Ihr Kit of Parts und Ihre Regeln – die KI schreibt den Code. Empfohlen ist ein starker
+      Agent (Claude Pro / ChatGPT Plus); kostenlos geht es über die <b>GWDG Academic Cloud</b> (gute Code-Modelle:
+      <i>Qwen 3 Coder Next</i>, <i>GLM 5.3 Flash</i>, <i>DeepSeek V4 Flash</i>).</p>
+      <div class="btnrow"><a class="btn ghost" href="https://chat-ai.academiccloud.de/" target="_blank" rel="noopener">GWDG Academic Cloud (kostenlos) →</a></div>
+      <p><b>Prompt-Baukasten</b> – tragen Sie Ihre Regeln in Stichworten ein, dann kopieren Sie den fertigen Prompt:</p>
+      <textarea id="ideaIn" placeholder="z. B.: Baukasten aus drei Modulbreiten; Erdgeschoss offen (Läden), darüber Wohngeschosse; jedes 2. Geschoss zurückgesetzt (Terrasse); Dachgeschoss als Staffel …"></textarea>
+      <div class="copywrap">
+        <pre id="promptOut"></pre>
+        <button class="copy" id="copyPrompt">Kopieren</button>
+      </div>
+      <div class="box"><div class="lbl">Starker Carbon→Silicon-Zug</div>Bildfähige Modelle können ein <b>Foto Ihres handgezeichneten Regelblatts</b> einlesen. Laden Sie es hoch und lassen Sie die Regeln daraus ableiten.</div>
+      <div class="check"><input type="checkbox" id="c5"><label for="c5">Erste KI-Version gebaut</label></div>
+    </div>
+  </details>
+
+  <!-- STEP 6 -->
+  <details class="step">
+    <summary><span class="num">6</span><span><span class="stitle">Ändern &amp; ansehen</span><br><span class="ssub">Code einspielen, Tool neu laden</span></span><span class="chev">▶</span></summary>
+    <div class="body">
+      <p>Den Code der KI bringen Sie so in Ihr Repository (ganz ohne Installation, direkt im Browser):</p>
+      <ul>
+        <li>In Ihrem Repo auf <code>index.html</code> klicken → oben rechts das <b>Stift-Symbol</b> (Edit).</li>
+        <li>Alten Inhalt ersetzen, den neuen Code einfügen.</li>
+        <li>Unten <b>„Commit changes"</b> (= Speichern mit Versionseintrag).</li>
+        <li>Nach ~1 Minute Ihre Pages-URL neu laden – fertig.</li>
+      </ul>
+      <div class="box"><div class="lbl">Testen wie ein Profi</div>Rechtsklick → „Untersuchen" → Reiter <span class="term" data-tip="Zeigt Fehlermeldungen des Browsers. Rote Zeilen = etwas stimmt im Code nicht – diese Meldung einfach der KI zeigen.">Konsole</span>. Rote Meldungen kopieren und der KI zeigen – sie behebt sie.</div>
+      <div class="check"><input type="checkbox" id="c6"><label for="c6">Änderung läuft live</label></div>
+    </div>
+  </details>
+
+  <!-- STEP 7 -->
+  <details class="step">
+    <summary><span class="num">7</span><span><span class="stitle">Abgabe</span><br><span class="ssub">Was wann wohin</span></span><span class="chev">▶</span></summary>
+    <div class="body">
+      <ul>
+        <li><b>Offline-Artefakt</b> (Fr, bis 18:00): Foto/Scan Ihres handgezeichneten Regel-/Vokabularblatts als PDF – <i>vor</i> dem KI-Einsatz.</li>
+        <li><b>Repo-Link + Reflexion</b> (Mo, bis 12:00) über OLAT bzw. E-Mail. Vorlagen liegen im Ordner <code>vorlagen/</code>.</li>
+        <li><b>Peer-Feedback</b> in der Testrunde am Dienstag (Zoom).</li>
+      </ul>
+      <div class="box"><div class="lbl">Erinnerung</div>Bewertet werden Konzept, Carbon→Silicon-Kohärenz, Funktion/Gestaltung und Reflexion – je 25 %. Nicht der Code.</div>
+      <div class="check"><input type="checkbox" id="c7"><label for="c7">Ich weiß, was abzugeben ist</label></div>
+    </div>
+  </details>
+
+  <h2 class="sec">Glossar – die wichtigsten Begriffe</h2>
+  <details class="gloss"><summary>Repository („Repo")</summary><div class="g">Ihr Projektordner auf GitHub – alle Dateien plus ihr Änderungsverlauf.</div></details>
+  <details class="gloss"><summary>Commit</summary><div class="g">Ein gespeicherter Stand mit kurzer Notiz, was Sie geändert haben. Wie ein Zwischenspeichern mit Logbuch.</div></details>
+  <details class="gloss"><summary>Branch (<code>main</code>)</summary><div class="g">Ein Entwicklungsstrang. Sie arbeiten einfach im Hauptstrang <code>main</code> – mehr brauchen Sie nicht.</div></details>
+  <details class="gloss"><summary>GitHub Pages</summary><div class="g">Verwandelt Ihre Dateien in eine echte, öffentliche Webseite unter einer eigenen Adresse.</div></details>
+  <details class="gloss"><summary><code>index.html</code></summary><div class="g">Die Startdatei Ihrer Webseite – hier lebt Ihr Konfigurator.</div></details>
+  <details class="gloss"><summary>three.js</summary><div class="g">Eine fertige Bibliothek, um 3D im Browser darzustellen. Sie ist bereits eingebunden.</div></details>
+  <details class="gloss"><summary>CDN</summary><div class="g">Ein Web-Lieferdienst, über den Bibliotheken wie three.js geladen werden – nichts zu installieren.</div></details>
+  <details class="gloss"><summary>.obj / .glTF</summary><div class="g">Dateiformate für 3D-Modelle. Über die Export-Buttons speichern Sie Ihr Ergebnis in diesen Formaten.</div></details>
+  <details class="gloss"><summary>Konsole</summary><div class="g">Das Fehlerprotokoll des Browsers. Rote Zeilen zeigen, was im Code klemmt – ideal, um sie der KI zu zeigen.</div></details>
+
+  <footer>
+    Carbon to Silicon · Stegreif WS 2026/27 · Prof. Thomas Mrokon · Hochschule Mainz<br>
+    Sie definieren das System – die KI führt es aus.
+  </footer>
+</div>
+
+<!-- einfacher Tooltip -->
+<div id="tt" style="position:fixed;z-index:50;max-width:260px;background:#191a1c;color:#fff;padding:8px 10px;border-radius:8px;font-size:13px;line-height:1.4;pointer-events:none;opacity:0;transition:opacity .12s;"></div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "c2s-onboarding-v1";
+  var ids = ["c0","c1","c2","c3","c4","c5","c6","c7"];
+
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"{}"); }catch(e){ return {}; } }
+  function save(s){ try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
+
+  var state = load();
+
+  function refresh(){
+    var done = 0;
+    ids.forEach(function(id){
+      var cb = document.getElementById(id);
+      if(!cb) return;
+      var step = cb.closest(".step");
+      if(cb.checked){ done++; if(step) step.setAttribute("data-done","1"); }
+      else if(step){ step.removeAttribute("data-done"); }
+    });
+    var pct = Math.round(done/ids.length*100);
+    var fill = document.getElementById("barfill");
+    if(fill) fill.style.width = pct + "%";
+    var n = document.getElementById("pctnum");
+    if(n) n.textContent = done;
+  }
+
+  ids.forEach(function(id){
+    var cb = document.getElementById(id);
+    if(!cb) return;
+    if(state[id]) cb.checked = true;
+    cb.addEventListener("change", function(){
+      state[id] = cb.checked; save(state); refresh();
+    });
+  });
+  refresh();
+
+  // Prompt-Baukasten
+  var ideaIn = document.getElementById("ideaIn");
+  var out = document.getElementById("promptOut");
+  function buildPrompt(){
+    var idea = (ideaIn && ideaIn.value.trim()) ? ideaIn.value.trim() : "[HIER IHRE REGELN / IHR KIT OF PARTS IN STICHWORTEN]";
+    out.textContent =
+"Ich entwickle einen parametrischen Gebäude-Konfigurator als eine einzelne index.html mit three.js "+
+"(CDN, feste Version), rein clientseitig: kein Server, keine Datenbank, kein Build-Schritt.\n\n"+
+"Es gibt bereits einen Scaffold mit Baulücken-Kontext (zwei Brandwände, Nachbarn, bebaubares Volumen als "+
+"Draht-Envelope, Slider für Breite/Tiefe/Traufhöhe) und eine leere Funktion buildKonfigurator().\n\n"+
+"Setze in buildKonfigurator() mein Kit of Parts und meine Regeln um:\n"+ idea +"\n\n"+
+"Vorgaben: Die Geometrie entsteht in der Gruppe konfiguratorGruppe, bleibt innerhalb des Envelopes "+
+"(Breite x Tiefe x Traufhöhe) und muss über die vorhandenen OBJ-/glTF-Export-Buttons exportierbar bleiben. "+
+"Ändere nur die markierte Konfigurator-Zone, nicht den vorgegebenen Kontext. "+
+"Gib mir den vollständigen, lauffähigen Code und erkläre kurz, was du geändert hast.";
+  }
+  if(ideaIn){ ideaIn.addEventListener("input", buildPrompt); }
+  buildPrompt();
+
+  var copyBtn = document.getElementById("copyPrompt");
+  if(copyBtn){
+    copyBtn.addEventListener("click", function(){
+      var txt = out.textContent;
+      function ok(){ copyBtn.textContent="Kopiert ✓"; copyBtn.classList.add("done"); setTimeout(function(){ copyBtn.textContent="Kopieren"; copyBtn.classList.remove("done"); },1600); }
+      if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok,function(){ fallback(txt); ok(); }); }
+      else { fallback(txt); ok(); }
+    });
+  }
+  function fallback(txt){ try{ var t=document.createElement("textarea"); t.value=txt; document.body.appendChild(t); t.select(); document.execCommand("copy"); document.body.removeChild(t);}catch(e){} }
+
+  // Tooltips
+  var tt = document.getElementById("tt");
+  function showTip(el){ tt.textContent = el.getAttribute("data-tip"); var r=el.getBoundingClientRect();
+    tt.style.left = Math.min(r.left, innerWidth-280)+"px"; tt.style.top = (r.bottom+8)+"px"; tt.style.opacity="1"; }
+  function hideTip(){ tt.style.opacity="0"; }
+  document.querySelectorAll(".term").forEach(function(el){
+    el.addEventListener("mouseenter", function(){ showTip(el); });
+    el.addEventListener("mouseleave", hideTip);
+    el.addEventListener("click", function(){ showTip(el); setTimeout(hideTip,2500); });
+  });
+})();
+</script>
+</body>
+</html>

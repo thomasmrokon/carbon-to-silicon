@@ -5,6 +5,10 @@ Prof. Thomas Mrokon
 
 *Vom gedanklichen Ursprung zum generativen Entwurfs-Konfigurator*
 
+> 👉 **Neu bei GitHub oder beim Programmieren?** Starten Sie mit dem interaktiven
+> Onboarding: **https://thomasmrokon.github.io/carbon-to-silicon/onboarding.html**
+> (nach dem Anlegen Ihrer eigenen Kopie auch unter `…ihre-url…/onboarding.html`).
+
 ---
 
 ## Worum es geht
