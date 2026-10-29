@@ -66,15 +66,15 @@ Anteil Flächen mit Außenbezug, Flexibilität/Umnutzbarkeit, Kosten je Nutzeinh
 | Phase | Zeit | Inhalt |
 |---|---|---|
 | Kick-off (Zoom) | Fr, 14:00 | Einführung, technische Voraussetzungen, Werkzeuge |
-| **Offline-Phase (Kohlenstoff)** | Fr, ca. 14:30–18:00 | Kein Internet, keine Fachliteratur, keine KI – nur Kopf, Stift, Papier. Hier entsteht Ihr **Regelsystem**. Analoges Ergebnis bis 18:00 einreichen – **vor** jedem KI-Einsatz. |
+| **Offline-Phase (Kohlenstoff)** | Fr, ca. 14:30–18:00 | Kein Internet, keine Fachliteratur, keine KI – nur Kopf, Stift, Papier. Hier entsteht Ihr **Regelsystem**. Analoges Ergebnis bis 18:00 **auf OLAT** einreichen – **vor** jedem KI-Einsatz. |
 | Entwicklung (Silicium) | Sa | Umsetzung mit KI-Agenten zum lauffähigen Konfigurator |
 | Iteration | So | Testen, Bugfixing, README |
-| **Abgabe** | Mo, bis 12:00 | **ZIP auf OLAT**: Offline-Artefakt, Repo-Link, Reflexion |
+| **Abgabe** | Mo, bis 12:00 | **ZIP auf OLAT**: Repo-Link + Reflexion |
 | Präsentation & Testrunde | Di, 12:00 (Zoom) | Kurzvorstellung, Test eines zugewiesenen Werkzeugs, strukturiertes Feedback |
 
 ## Abgaben
 
-- **Offline-Artefakt** (Fr, bis 18:00): 1–3 handgezeichnete Blätter (A4/A3) als PDF.
+- **Offline-Artefakt** (Fr, bis 18:00, auf OLAT): 1–3 handgezeichnete Blätter (A4/A3) als PDF.
   Pflicht ist ein **Regel-/Vokabularblatt** (Bausteine, Kombinationsregeln,
   Parameter), dazu Konzeptskizzen und/oder ein Ablaufdiagramm. Keine am Rechner
   erzeugten Inhalte.
@@ -83,8 +83,8 @@ Anteil Flächen mit Außenbezug, Flexibilität/Umnutzbarkeit, Kosten je Nutzeinh
 - **Reflexion** (Mo, max. 1 DIN-A4-Seite): siehe [`vorlagen/REFLEXION.md`](vorlagen/REFLEXION.md).
 - **Peer-Feedback** (Di): siehe [`vorlagen/PEER-FEEDBACK.md`](vorlagen/PEER-FEEDBACK.md).
 
-**Gesamtabgabe (Mo, bis 12:00):** als **eine ZIP-Datei auf OLAT** – das Offline-Artefakt
-(PDF), eine Textdatei mit dem Link zu Ihrem Repository und die Reflexion gemeinsam.
+**Montagsabgabe (Mo, bis 12:00):** der Repo-Link (als Textdatei) und die Reflexion gemeinsam
+als **ZIP-Datei auf OLAT**. (Das Offline-Artefakt wird bereits am Freitag separat auf OLAT abgegeben.)
 
 ## Bewertung (4 Kriterien, je 25 %)
 
