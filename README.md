@@ -69,7 +69,7 @@ Anteil Flächen mit Außenbezug, Flexibilität/Umnutzbarkeit, Kosten je Nutzeinh
 | **Offline-Phase (Kohlenstoff)** | Fr, ca. 14:30–18:00 | Kein Internet, keine Fachliteratur, keine KI – nur Kopf, Stift, Papier. Hier entsteht Ihr **Regelsystem**. Analoges Ergebnis bis 18:00 einreichen – **vor** jedem KI-Einsatz. |
 | Entwicklung (Silicium) | Sa | Umsetzung mit KI-Agenten zum lauffähigen Konfigurator |
 | Iteration | So | Testen, Bugfixing, README |
-| **Abgabe** | Mo, bis 12:00 | Repo-Link + Reflexion (OLAT bzw. E-Mail) |
+| **Abgabe** | Mo, bis 12:00 | **ZIP auf OLAT**: Offline-Artefakt, Repo-Link, Reflexion |
 | Präsentation & Testrunde | Di, 12:00 (Zoom) | Kurzvorstellung, Test eines zugewiesenen Werkzeugs, strukturiertes Feedback |
 
 ## Abgaben
@@ -82,6 +82,9 @@ Anteil Flächen mit Außenbezug, Flexibilität/Umnutzbarkeit, Kosten je Nutzeinh
   Browser erreichbar.
 - **Reflexion** (Mo, max. 1 DIN-A4-Seite): siehe [`vorlagen/REFLEXION.md`](vorlagen/REFLEXION.md).
 - **Peer-Feedback** (Di): siehe [`vorlagen/PEER-FEEDBACK.md`](vorlagen/PEER-FEEDBACK.md).
+
+**Gesamtabgabe (Mo, bis 12:00):** als **eine ZIP-Datei auf OLAT** – das Offline-Artefakt
+(PDF), eine Textdatei mit dem Link zu Ihrem Repository und die Reflexion gemeinsam.
 
 ## Bewertung (4 Kriterien, je 25 %)
 
