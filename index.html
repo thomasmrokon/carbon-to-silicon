@@ -74,6 +74,12 @@
     <input type="range" id="traufe" min="9" max="21" step="1.5" value="15" />
   </div>
 
+  <div class="div">Umgebung</div>
+  <div class="row">
+    <label>Straßenbreite <b><span id="vStrasse">10</span> m</b></label>
+    <input type="range" id="strasse" min="10" max="20" step="1" value="10" />
+  </div>
+
   <div class="div">Sonnenstand (Mainz, 50° N)</div>
   <div class="row">
     <label>Tageszeit <b><span id="vHour">12:00</span></b></label>
@@ -200,10 +206,9 @@ const masseGruppe = new THREE.Group();
 scene.add(kontextGruppe, konfiguratorGruppe, sonneGruppe, masseGruppe);
 
 // Parameter (werden von den Bedienelementen gesetzt)
-const P = { breite: 10, tiefe: 20, traufe: 15, hour: 12, decl: 0, nord: 0, sunPath: true };
+const P = { breite: 10, tiefe: 20, traufe: 15, strasse: 10, hour: 12, decl: 0, nord: 0, sunPath: true };
 
-// Feste Umgebungsmaße (Dummy-Blockrand)
-const STRASSE = 10;    // Straßenbreite (m)
+// Umgebungsmaße des Dummy-Blockrands (Straßenbreite ist über P.strasse regelbar)
 const BLOCK_W = 70;    // Blockbreite (m)
 const SIDE_BT = 13;    // Tiefe seitlicher Blockränder (m)
 const HOF = 24;        // Innenhof-Tiefe (m)
@@ -239,37 +244,27 @@ function buildKontext() {
   kontextGruppe.add(boden);
 
   // Straße (vor dem Grundstück, Z < 0)
-  const strasse = new THREE.Mesh(new THREE.PlaneGeometry(160, STRASSE),
+  const strasse = new THREE.Mesh(new THREE.PlaneGeometry(160, P.strasse),
     new THREE.MeshStandardMaterial({ color: 0xbfbfb9, roughness: 1 }));
-  strasse.rotation.x = -Math.PI / 2; strasse.position.set(0, 0.01, -STRASSE / 2); strasse.receiveShadow = true;
+  strasse.rotation.x = -Math.PI / 2; strasse.position.set(0, 0.01, -P.strasse / 2); strasse.receiveShadow = true;
   kontextGruppe.add(strasse);
 
-  // Zwei seitliche Brandwände (Grundstücksgrenze der Baulücke)
-  for (const s of [-1, 1]) {
-    const w = new THREE.Mesh(new THREE.PlaneGeometry(tiefe, traufe), wand);
-    w.rotation.y = Math.PI / 2; w.position.set(s * breite / 2, traufe / 2, tiefe / 2);
-    w.receiveShadow = true; kontextGruppe.add(w);
-  }
-
-  // --- Blockrand: die Baulücke ist Teil eines geschlossenen Straßenblocks ---
+  // --- Blockrand als EINE Extrusion (ringförmiger Grundriss mit Baulücken-Öffnung)
+  //     -> keine überlappenden/doppelten Flächen -> kein Flackern.
+  //     Die Öffnungsflanken der Lücke sind zugleich die Brandwände. ---
   const BW = BLOCK_W, sideBt = SIDE_BT, hof = HOF, rearBt = REAR_BT;
-  const blockTiefe = tiefe + hof + rearBt;  // Gesamttiefe des Blocks ab Straße
-
-  // Straßenseitige Blockkante: Nachbarn links/rechts der Baulücke (mit Lücke)
-  const frontH = [traufe, traufe * 1.1, traufe * 0.9, traufe * 1.05];
-  for (const s of [-1, 1]) {
-    for (let k = 0; k < 4; k++) {
-      const x = s * (breite / 2 + 4.75 + k * 9.5);
-      if (Math.abs(x) + 4.75 > BW / 2) break;
-      box(9.5, frontH[k], tiefe, x, tiefe / 2, k % 2 ? grauDkl : grau);
-    }
-  }
-
-  // Seitliche Blockränder (von der Straße bis zur Rückseite – fassen den Hof)
-  for (const s of [-1, 1]) box(sideBt, traufe * 1.05, blockTiefe, s * (BW / 2 - sideBt / 2), blockTiefe / 2, grauDkl);
-
-  // Rückwärtiger Blockrand (schließt den Innenhof)
-  box(BW, traufe, rearBt, 0, blockTiefe - rearBt / 2, grau);
+  const oz1 = tiefe + hof + rearBt, ox = BW / 2, ix = BW / 2 - sideBt;
+  const cz0 = tiefe, cz1 = oz1 - rearBt, g = breite / 2;
+  const pts = [[-ox,0],[-ox,oz1],[ox,oz1],[ox,0],[g,0],[g,cz0],[ix,cz0],[ix,cz1],[-ix,cz1],[-ix,cz0],[-g,cz0],[-g,0]];
+  const shp = new THREE.Shape();
+  shp.moveTo(pts[0][0], -pts[0][1]);
+  for (let i = 1; i < pts.length; i++) shp.lineTo(pts[i][0], -pts[i][1]);
+  shp.closePath();
+  const blockGeo = new THREE.ExtrudeGeometry(shp, { depth: traufe, bevelEnabled: false });
+  blockGeo.rotateX(-Math.PI / 2);
+  const blockMesh = new THREE.Mesh(blockGeo, new THREE.MeshStandardMaterial({ color: 0xc2c2bd, roughness: 0.95, side: THREE.DoubleSide }));
+  blockMesh.castShadow = true; blockMesh.receiveShadow = true;
+  kontextGruppe.add(blockMesh);
 
   // Innenhof-Fläche (nur zur Lesbarkeit eingefärbt)
   const hofFl = new THREE.Mesh(new THREE.PlaneGeometry(BW - 2 * sideBt, hof),
@@ -277,9 +272,8 @@ function buildKontext() {
   hofFl.rotation.x = -Math.PI / 2; hofFl.position.set(0, 0.02, tiefe + hof / 2); hofFl.receiveShadow = true;
   kontextGruppe.add(hofFl);
 
-  // Gegenüberliegende Straßenseite (geschlossene Blockkante – ohne Lücken)
-  const oppH = [14, 17, 13, 16, 15];
-  for (let i = -2; i <= 2; i++) box(10.6, oppH[i + 2], 14, i * 10.5, -(STRASSE + 7), i % 2 ? grau : grauDkl);
+  // Gegenüberliegende Straßenseite (eine geschlossene Blockkante)
+  box(BW, 16, 14, 0, -(P.strasse + 7), grauDkl);
 
   // Bebaubares Volumen (Draht-Envelope)
   const env = new THREE.Mesh(new THREE.BoxGeometry(breite, traufe, tiefe),
@@ -476,8 +470,8 @@ function buildMasse() {
   const hofW = BLOCK_W - 2 * SIDE_BT;
   // Straßenbreite (quer über die Straße)
   const xs = 15;
-  masseGruppe.add(dimLine(new V(xs, y, 0), new V(xs, y, -STRASSE)));
-  masseGruppe.add(massLabel('Straße ' + STRASSE + ' m', new V(xs + 0.6, y, -STRASSE / 2)));
+  masseGruppe.add(dimLine(new V(xs, y, 0), new V(xs, y, -P.strasse)));
+  masseGruppe.add(massLabel('Straße ' + P.strasse + ' m', new V(xs + 0.6, y, -P.strasse / 2)));
   // Innenhof-Tiefe (längs)
   masseGruppe.add(dimLine(new V(-6, y, tiefe), new V(-6, y, tiefe + HOF)));
   masseGruppe.add(massLabel('Innenhof-Tiefe ' + HOF + ' m', new V(-6.6, y, tiefe + HOF / 2)));
@@ -507,6 +501,8 @@ function bindGeom(id, key, labelId) {
 bindGeom('breite', 'breite', 'vBreite');
 bindGeom('tiefe',  'tiefe',  'vTiefe');
 bindGeom('traufe', 'traufe', 'vTraufe');
+const strEl = document.getElementById('strasse');
+strEl.addEventListener('input', () => { P.strasse = parseFloat(strEl.value); document.getElementById('vStrasse').textContent = P.strasse; rebuildGeom(); });
 
 const hourEl = document.getElementById('hour');
 hourEl.addEventListener('input', () => {

@@ -32,7 +32,7 @@ Für alle gleich – das sichert Vergleichbarkeit und liefert den Widerstand, an
 sich Ihr Regelsystem bewährt:
 
 - Innerstädtische **Baulücke im Blockrand**, beidseitig an **Brandwände** grenzend.
-- Straßenbreite **6–12 m**, Tiefe **bis 25 m**, Traufhöhe im Anschluss an den Bestand
+- Breite an der Straße **6–12 m**, Tiefe **bis 25 m**, Traufhöhe im Anschluss an den Bestand
   (**4–6 Vollgeschosse**).
 - Belichtung nur von **Straßen- und Hofseite**.
 - Die **Grundstücksbreite kann Eingabeparameter** Ihres Konfigurators sein.
@@ -42,9 +42,10 @@ Der Kontext ist im Scaffold (`index.html`) bereits als 3D-Geometrie hinterlegt u
 zudem einen **steuerbaren Sonnenstand** (Tageszeit, Jahreszeit, Nordrichtung) mit
 Sonnenbahn und **Schlagschatten**, einen als Dummy-Geometrie modellierten
 **geschlossenen Blockrand mit Innenhof** (Straße auf der einen, Hof auf der anderen Seite)
-sowie die wichtigsten **Umgebungsmaße** (Straßenbreite, Innenhof-Tiefe/-Breite) direkt im
-Modell – nützlich für Verschattungs- und Hofstudien und als Basis für ein tageslichtbezogenes
-eigenes Kriterium. (Die Baulücken-Maße selbst sind über die Schieberegler ablesbar.)
+sowie die wichtigsten **Umgebungsmaße** (Straßenbreite – 10–20 m regelbar –,
+Innenhof-Tiefe/-Breite) direkt im Modell – nützlich für Verschattungs- und Hofstudien und als
+Basis für ein tageslichtbezogenes eigenes Kriterium. (Die Baulücken-Maße selbst sind über die
+Schieberegler ablesbar.)
 
 Das **UI dürfen Sie frei anpassen**; zusätzliche Darstellungen und Auswertungen des Modells
 (Schnitte, Pläne, weitere Kennwerte …) sind ausdrücklich erwünscht.
