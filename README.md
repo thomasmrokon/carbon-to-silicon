@@ -38,7 +38,11 @@ sich Ihr Regelsystem bewährt:
 - Die **Grundstücksbreite kann Eingabeparameter** Ihres Konfigurators sein.
 
 Der Kontext ist im Scaffold (`index.html`) bereits als 3D-Geometrie hinterlegt und
-**verbindlich**. Ihr Konfigurator baut *in dieses Volumen hinein*.
+**verbindlich**. Ihr Konfigurator baut *in dieses Volumen hinein*. Der Scaffold enthält
+zudem einen **steuerbaren Sonnenstand** (Tageszeit, Jahreszeit, Nordrichtung) mit
+Sonnenbahn und **Schlagschatten** sowie eine großzügig modellierte **Umgebung**
+(Nachbarzeile, Straßengegenseite, rückwärtige Bebauung mit **Innenhof**) – nützlich für
+Verschattungs- und Hofstudien und als Basis für ein tageslichtbezogenes eigenes Kriterium.
 
 ## Automatische Auswertung (DIN 277 & Kennwerte)
 
