@@ -31,10 +31,11 @@ Diese Rahmenbedingungen können Sie **direkt an Ihren KI-Agenten übergeben**.
 
 ### Hinweis zum Scaffold
 Die mitgelieferte `index.html` enthält bereits Szene, Kamera, Licht, OrbitControls,
-den Baulücken-Kontext inkl. großzügiger Umgebung, einen steuerbaren **Sonnenstand** mit
-Sonnenbahn und Schlagschatten, Parameter-Slider, die Export-Funktionen und eine **feste
-Auswertung** (DIN 277 auf Massenebene, Planungskennwerte, A/V, CO₂/Kosten), die live an
-Ihrer Geometrie misst. Ihr Beitrag entsteht in der markierten Zone
+den Baulücken-Kontext als geschlossenen **Blockrand mit Innenhof**, einen steuerbaren
+**Sonnenstand** mit Sonnenbahn und Schlagschatten, die wichtigsten **Maße** im Modell,
+Parameter-Slider, die Export-Funktionen und eine **feste Auswertung** (DIN 277 auf
+Massenebene, Planungskennwerte, A/V, CO₂/Kosten), die live an Ihrer Geometrie misst.
+Das UI dürfen Sie frei anpassen; weitere Darstellungen des Modells sind ausdrücklich erwünscht. Ihr Beitrag entsteht in der markierten Zone
 `=== HIER BEGINNT IHR KONFIGURATOR ===` (Kit of Parts + Regeln) sowie in
 `=== IHR EIGENES KRITERIUM ===` (die Funktion `eigenesKriterium()` für Ihr selbst
 definiertes, vergleichendes Bewertungskriterium). Kontext und feste Auswertung bleiben unverändert.
