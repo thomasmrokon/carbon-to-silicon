@@ -66,7 +66,7 @@ Anteil Flächen mit Außenbezug, Flexibilität/Umnutzbarkeit, Kosten je Nutzeinh
 | Phase | Zeit | Inhalt |
 |---|---|---|
 | Kick-off (Zoom) | Fr, 14:00 | Einführung, technische Voraussetzungen, Werkzeuge |
-| **Offline-Phase (Kohlenstoff)** | Fr, ca. 14:30–18:00 | Kein Internet, keine Fachliteratur, keine KI – nur Kopf, Stift, Papier. Hier entsteht Ihr **Regelsystem**. Analoges Ergebnis bis 18:00 **auf OLAT** einreichen – **vor** jedem KI-Einsatz. |
+| **Offline-Phase (Kohlenstoff)** | Fr, ca. 14:30–20:00 | Kein Internet, keine Fachliteratur, keine KI – nur Kopf, Stift, Papier. Hier entsteht Ihr **Regelsystem**. Analoges Ergebnis bis 20:00 **auf OLAT** einreichen – **vor** jedem KI-Einsatz. |
 | Entwicklung (Silicium) | Sa | Umsetzung mit KI-Agenten zum lauffähigen Konfigurator |
 | Iteration | So | Testen, Bugfixing, README |
 | **Abgabe** | Mo, bis 12:00 | **ZIP auf OLAT**: Repo-Link + Reflexion |
@@ -74,7 +74,7 @@ Anteil Flächen mit Außenbezug, Flexibilität/Umnutzbarkeit, Kosten je Nutzeinh
 
 ## Abgaben
 
-- **Offline-Artefakt** (Fr, bis 18:00, auf OLAT): 1–3 handgezeichnete Blätter (A4/A3) als PDF.
+- **Offline-Artefakt** (Fr, bis 20:00, auf OLAT): 1–3 handgezeichnete Blätter (A4/A3) als PDF.
   Pflicht ist ein **Regel-/Vokabularblatt** (Bausteine, Kombinationsregeln,
   Parameter), dazu Konzeptskizzen und/oder ein Ablaufdiagramm. Keine am Rechner
   erzeugten Inhalte.
