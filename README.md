@@ -90,7 +90,8 @@ Anteil Flächen mit Außenbezug, Flexibilität/Umnutzbarkeit, Kosten je Nutzeinh
   erzeugten Inhalte.
 - **Dieses Repository** (Mo): lauffähiger Konfigurator, über **GitHub Pages** im
   Browser erreichbar.
-- **Reflexion** (Mo, max. 1 DIN-A4-Seite): siehe [`vorlagen/REFLEXION.md`](vorlagen/REFLEXION.md).
+- **Reflexion** (Mo, max. 1 DIN-A4-Seite): siehe [`vorlagen/REFLEXION.md`](vorlagen/REFLEXION.md);
+  dort auch das **verwendete KI-Modell** (optional: verbrauchte Tokens).
 
 **Montagsabgabe (Mo, bis 12:00):** der Repo-Link (als Textdatei) und die Reflexion gemeinsam
 als **ZIP-Datei auf OLAT**. (Das Offline-Artefakt wird bereits am Freitag separat auf OLAT abgegeben.)
@@ -129,6 +130,10 @@ Haltung und die Nachvollziehbarkeit des Weges.
 [`TECHNISCHE_ANFORDERUNGEN.md`](TECHNISCHE_ANFORDERUNGEN.md) als Rahmen und Ihr
 Regel-/Vokabularblatt als Konzept. Tipp: Bildfähige Modelle können ein **Foto Ihres
 handgezeichneten Regelblatts** einlesen – ein direkter Carbon→Silicon-Übergang.
+
+Der three.js-Scaffold ist der **empfohlene Standard** (schnellster, sicherer Weg).
+Ambitionierte Teams dürfen **aufwändigere Stacks** nutzen, solange die **Pflicht-Anforderungen**
+in [`TECHNISCHE_ANFORDERUNGEN.md`](TECHNISCHE_ANFORDERUNGEN.md) erfüllt bleiben.
 
 ## Ressourcen
 
