@@ -42,8 +42,9 @@ Der Kontext ist im Scaffold (`index.html`) bereits als 3D-Geometrie hinterlegt u
 zudem einen **steuerbaren Sonnenstand** (Tageszeit, Jahreszeit, Nordrichtung) mit
 Sonnenbahn und **Schlagschatten**, einen als Dummy-Geometrie modellierten
 **geschlossenen Blockrand mit Innenhof** (Straße auf der einen, Hof auf der anderen Seite)
-sowie die wichtigsten **Maße** (Breite, Tiefe, Traufe, Innenhof) direkt im Modell – nützlich
-für Verschattungs- und Hofstudien und als Basis für ein tageslichtbezogenes eigenes Kriterium.
+sowie die wichtigsten **Umgebungsmaße** (Straßenbreite, Innenhof-Tiefe/-Breite) direkt im
+Modell – nützlich für Verschattungs- und Hofstudien und als Basis für ein tageslichtbezogenes
+eigenes Kriterium. (Die Baulücken-Maße selbst sind über die Schieberegler ablesbar.)
 
 Das **UI dürfen Sie frei anpassen**; zusätzliche Darstellungen und Auswertungen des Modells
 (Schnitte, Pläne, weitere Kennwerte …) sind ausdrücklich erwünscht.

@@ -202,6 +202,13 @@ scene.add(kontextGruppe, konfiguratorGruppe, sonneGruppe, masseGruppe);
 // Parameter (werden von den Bedienelementen gesetzt)
 const P = { breite: 10, tiefe: 20, traufe: 15, hour: 12, decl: 0, nord: 0, sunPath: true };
 
+// Feste Umgebungsmaße (Dummy-Blockrand)
+const STRASSE = 10;    // Straßenbreite (m)
+const BLOCK_W = 70;    // Blockbreite (m)
+const SIDE_BT = 13;    // Tiefe seitlicher Blockränder (m)
+const HOF = 24;        // Innenhof-Tiefe (m)
+const REAR_BT = 15;    // Tiefe rückwärtiger Blockrand (m)
+
 const center = () => new THREE.Vector3(0, P.traufe / 2, P.tiefe / 2);
 
 // ------------------------------------------------------------------
@@ -232,9 +239,9 @@ function buildKontext() {
   kontextGruppe.add(boden);
 
   // Straße (vor dem Grundstück, Z < 0)
-  const strasse = new THREE.Mesh(new THREE.PlaneGeometry(160, 10),
+  const strasse = new THREE.Mesh(new THREE.PlaneGeometry(160, STRASSE),
     new THREE.MeshStandardMaterial({ color: 0xbfbfb9, roughness: 1 }));
-  strasse.rotation.x = -Math.PI / 2; strasse.position.set(0, 0.01, -5); strasse.receiveShadow = true;
+  strasse.rotation.x = -Math.PI / 2; strasse.position.set(0, 0.01, -STRASSE / 2); strasse.receiveShadow = true;
   kontextGruppe.add(strasse);
 
   // Zwei seitliche Brandwände (Grundstücksgrenze der Baulücke)
@@ -245,10 +252,7 @@ function buildKontext() {
   }
 
   // --- Blockrand: die Baulücke ist Teil eines geschlossenen Straßenblocks ---
-  const BW = 70;        // Blockbreite (X)
-  const sideBt = 13;    // Tiefe der seitlichen Blockränder
-  const hof = 24;       // Tiefe des Innenhofs
-  const rearBt = 15;    // Tiefe des rückwärtigen Blockrands
+  const BW = BLOCK_W, sideBt = SIDE_BT, hof = HOF, rearBt = REAR_BT;
   const blockTiefe = tiefe + hof + rearBt;  // Gesamttiefe des Blocks ab Straße
 
   // Straßenseitige Blockkante: Nachbarn links/rechts der Baulücke (mit Lücke)
@@ -273,9 +277,9 @@ function buildKontext() {
   hofFl.rotation.x = -Math.PI / 2; hofFl.position.set(0, 0.02, tiefe + hof / 2); hofFl.receiveShadow = true;
   kontextGruppe.add(hofFl);
 
-  // Gegenüberliegende Straßenseite (Blockrand des Nachbarblocks)
+  // Gegenüberliegende Straßenseite (geschlossene Blockkante – ohne Lücken)
   const oppH = [14, 17, 13, 16, 15];
-  for (let i = -2; i <= 2; i++) box(9.5, oppH[i + 2], 14, i * 10.5, -17, i % 2 ? grau : grauDkl);
+  for (let i = -2; i <= 2; i++) box(10.6, oppH[i + 2], 14, i * 10.5, -(STRASSE + 7), i % 2 ? grau : grauDkl);
 
   // Bebaubares Volumen (Draht-Envelope)
   const env = new THREE.Mesh(new THREE.BoxGeometry(breite, traufe, tiefe),
@@ -466,21 +470,21 @@ function dimLine(a, b) {
     new THREE.LineBasicMaterial({ color: 0xb03030 }));
 }
 function buildMasse() {
+  // Umgebungsmaße (die Baulücken-Maße sind über die Schieberegler ablesbar)
   masseGruppe.clear();
-  const { breite, tiefe, traufe } = P, y = 0.25, off = 1.3, V = THREE.Vector3;
-  // Breite (Straßenfront)
-  masseGruppe.add(dimLine(new V(-breite/2, y, -off), new V(breite/2, y, -off)));
-  masseGruppe.add(massLabel('Breite ' + breite.toFixed(1) + ' m', new V(0, y, -off - 0.5)));
-  // Tiefe (seitlich)
-  const xt = breite/2 + off;
-  masseGruppe.add(dimLine(new V(xt, y, 0), new V(xt, y, tiefe)));
-  masseGruppe.add(massLabel('Tiefe ' + tiefe.toFixed(1) + ' m', new V(xt + 0.5, y, tiefe/2)));
-  // Traufhöhe (vertikale Kante an der Straßenfront)
-  masseGruppe.add(dimLine(new V(breite/2, 0, 0), new V(breite/2, traufe, 0)));
-  masseGruppe.add(massLabel('Traufe ' + traufe.toFixed(1) + ' m', new V(breite/2 + 0.4, traufe/2, 0)));
-  // Innenhof-Tiefe
-  masseGruppe.add(dimLine(new V(0, y, tiefe), new V(0, y, tiefe + 24)));
-  masseGruppe.add(massLabel('Innenhof ~24 m', new V(0, y, tiefe + 12)));
+  const { tiefe } = P, y = 0.3, V = THREE.Vector3;
+  const hofW = BLOCK_W - 2 * SIDE_BT;
+  // Straßenbreite (quer über die Straße)
+  const xs = 15;
+  masseGruppe.add(dimLine(new V(xs, y, 0), new V(xs, y, -STRASSE)));
+  masseGruppe.add(massLabel('Straße ' + STRASSE + ' m', new V(xs + 0.6, y, -STRASSE / 2)));
+  // Innenhof-Tiefe (längs)
+  masseGruppe.add(dimLine(new V(-6, y, tiefe), new V(-6, y, tiefe + HOF)));
+  masseGruppe.add(massLabel('Innenhof-Tiefe ' + HOF + ' m', new V(-6.6, y, tiefe + HOF / 2)));
+  // Innenhof-Breite (quer, nahe Rückseite)
+  const zc = tiefe + HOF - 3;
+  masseGruppe.add(dimLine(new V(-hofW / 2, y, zc), new V(hofW / 2, y, zc)));
+  masseGruppe.add(massLabel('Innenhof-Breite ' + hofW + ' m', new V(hofW / 2 + 0.6, y, zc)));
 }
 
 function rebuildGeom() {
