@@ -80,7 +80,7 @@ Anteil Flächen mit Außenbezug, Flexibilität/Umnutzbarkeit, Kosten je Nutzeinh
 | Entwicklung (Silicium) | Sa | Umsetzung mit KI-Agenten zum lauffähigen Konfigurator |
 | Iteration | So | Testen, Bugfixing, README |
 | **Abgabe** | Mo, bis 12:00 | **ZIP auf OLAT**: Repo-Link + Reflexion |
-| Präsentation & Testrunde | Di, 12:00 (Zoom) | Kurzvorstellung, Test eines zugewiesenen Werkzeugs, strukturiertes Feedback |
+| Gemeinsame Präsentation | Di, 12:00 (Zoom) | Alle stellen ihre Ergebnisse vor – damit alle die Entwürfe sehen |
 
 ## Abgaben
 
@@ -91,12 +91,11 @@ Anteil Flächen mit Außenbezug, Flexibilität/Umnutzbarkeit, Kosten je Nutzeinh
 - **Dieses Repository** (Mo): lauffähiger Konfigurator, über **GitHub Pages** im
   Browser erreichbar.
 - **Reflexion** (Mo, max. 1 DIN-A4-Seite): siehe [`vorlagen/REFLEXION.md`](vorlagen/REFLEXION.md).
-- **Peer-Feedback** (Di): siehe [`vorlagen/PEER-FEEDBACK.md`](vorlagen/PEER-FEEDBACK.md).
 
 **Montagsabgabe (Mo, bis 12:00):** der Repo-Link (als Textdatei) und die Reflexion gemeinsam
 als **ZIP-Datei auf OLAT**. (Das Offline-Artefakt wird bereits am Freitag separat auf OLAT abgegeben.)
 
-## Bewertung (4 Kriterien, je 25 %)
+## Bewertung (5 Kriterien, je 20 %)
 
 Bewertet wird **nicht der (KI-geschriebene) Code**, sondern die architektonische
 Haltung und die Nachvollziehbarkeit des Weges.
@@ -104,9 +103,10 @@ Haltung und die Nachvollziehbarkeit des Weges.
 1. **Konzept & Regelsystem** – Tiefe und Originalität des Denkens in der Offline-Phase.
 2. **Carbon-to-Silicon-Kohärenz** – nachvollziehbare Entwicklung vom Blatt zum Tool.
    Ein *begründeter* Kurswechsel zählt positiv, ein Bruch *ohne* Begründung negativ.
-3. **Funktion & Gestaltung des Werkzeugs** – Zuverlässigkeit, Bedienbarkeit,
-   gestalterische Qualität der erzeugten Entwürfe.
-4. **Reflexion & Testrunde** – Qualität der Reflexion und des gegebenen Peer-Feedbacks.
+3. **Werkzeug: Funktion & Bedienbarkeit** – technische Zuverlässigkeit und Bedienbarkeit.
+4. **Entwurfsqualität & eigenes Bewertungskriterium** – gestalterische Qualität der erzeugten
+   Entwürfe und Qualität Ihres selbst definierten, vergleichenden Kriteriums.
+5. **Reflexion** – Qualität der schriftlichen Reflexion.
 
 ---
 
